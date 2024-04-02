@@ -13,6 +13,7 @@ let option = {
         min: 6
     }
 }
+
 module.exports = {
     checkChain: function () {
         return [
@@ -21,5 +22,14 @@ module.exports = {
             check('username', "user phai dai tu %d den %d ki tu").isLength(option.username),
             check('role', "role khong hop le").isIn(["user", "admin", "publisher"])
         ]
-    }
+    },
+    forgotPasswordValidator: [
+        check('email', 'Email không đúng định dạng').isEmail()
+    ],
+    resetPasswordValidator: [
+        check("password", util.format("Mật khẩu phải dài ít nhất %d ký tự, %d chữ in hoa, %d chữ thường, %d số, và %d ký tự đặc biệt", option.password.minLength, option.password.minUppercase, option.password.minLowercase, option.password.minNumbers, option.password.minSymbols)).isStrongPassword(option.password)
+    ],
+    changePasswordValidator:[
+        check("newPassword", util.format("Mật khẩu mới phải dài ít nhất %d ký tự, %d chữ in hoa, %d chữ thường, %d số, và %d ký tự đặc biệt", option.password.minLength, option.password.minUppercase, option.password.minLowercase, option.password.minNumbers, option.password.minSymbols)).isStrongPassword(option.password)
+    ]
 }

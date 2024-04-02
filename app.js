@@ -19,9 +19,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/v1', require('./routes/index'));
 
 
-mongoose.connect('mongodb://localhost:27017/NodeJsS3').then(function () {
-  console.log("conneted");
-})
+
+mongoose.connect(`mongodb+srv://khang:123123123@atlascluster.l3z80in.mongodb.net/NodeJsClass2`).then( _ => console.log('Connected mongoose success!...'))
+.catch( err => console.error(`Error: connect:::`, err))
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

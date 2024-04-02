@@ -7,6 +7,7 @@ var { validationResult } = require('express-validator');
 var checkLogin = require('../middlewares/checklogin')
 var sendmail = require('../helper/sendMail');
 const config = require('../configs/config');
+var { forgotPasswordValidator, resetPasswordValidator, changePasswordValidator } = require('../validators/user');
 
 
 router.get('/me', checkLogin, function (req, res, next) {
@@ -69,7 +70,7 @@ router.post('/register', userValidator.checkChain(), async function (req, res, n
   }
 });
 
-router.post("/forgotPassword", async function (req, res, next) {
+router.post("/forgotPassword",forgotPasswordValidator, async function (req, res, next) {
   var user = await userModel.findOne({
     email: req.body.email
   })
@@ -93,7 +94,7 @@ router.post("/forgotPassword", async function (req, res, next) {
 
 })
 
-router.post("/ResetPassword/:token", async function (req, res, next) {
+router.post("/ResetPassword/:token", resetPasswordValidator, async function (req, res, next) {
   var user = await userModel.findOne({
     resetPasswordToken: req.params.token
   })
@@ -112,6 +113,21 @@ router.post("/ResetPassword/:token", async function (req, res, next) {
   }
 
 })
+
+router.post("/changePassword", checkLogin, changePasswordValidator, async function (req, res, next) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return ResHelper.RenderRes(res, false, errors.array());
+  }
+  try {
+    var user = req.user; 
+    user.password = req.body.newPassword; 
+    await user.save();
+    ResHelper.RenderRes(res, true, "Đổi mật khẩu thành công");
+  } catch (error) {
+    ResHelper.RenderRes(res, false, error);
+  }
+});
 
 
 module.exports = router;
